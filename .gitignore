@@ -3,6 +3,8 @@ dist/
 .env
 .env.*
 !.env.example
+supabase/functions/.env
+supabase/functions/.env.*
 .DS_Store
 *.log
 .vscode/
