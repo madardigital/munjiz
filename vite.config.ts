@@ -10,7 +10,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.svg', 'orders-manifest.webmanifest'],
       manifest: {
         name: 'منجِز — تنظيم تكليفات الطلاب',
         short_name: 'منجِز',
@@ -27,9 +27,17 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,woff2,webmanifest}'],
         navigateFallback: 'index.html'
       }
     })
-  ]
+  ],
+  build: {
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        orders: './orders/index.html'
+      }
+    }
+  }
 })
