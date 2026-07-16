@@ -20,7 +20,13 @@ export default function OrdersAuth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
       } else {
-        const { error } = await supabase.auth.signUp({ email, password, options: { data: { display_name: name.trim() } } })
+        const baseUrl = new URL(import.meta.env.BASE_URL, window.location.origin)
+        const emailRedirectTo = new URL('orders/', baseUrl).toString()
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { display_name: name.trim() }, emailRedirectTo }
+        })
         if (error) throw error
         setMessage('تم إنشاء الحساب. تحقق من بريدك لتأكيد التسجيل.')
       }
