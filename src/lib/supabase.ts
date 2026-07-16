@@ -1,7 +1,10 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-const url = import.meta.env.VITE_SUPABASE_URL?.trim()
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim()
+const defaultUrl = 'https://lqcfvyjlhfsloqsxrklh.supabase.co'
+const defaultKey = 'sb_publishable_HPh2j8gVFtN6miV2_1MRSQ_HVAC0K5W'
+
+const url = import.meta.env.VITE_SUPABASE_URL?.trim() || defaultUrl
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || defaultKey
 
 export const isSupabaseConfigured = Boolean(
   url &&
@@ -12,7 +15,7 @@ export const isSupabaseConfigured = Boolean(
 )
 
 export const supabase: SupabaseClient | null = isSupabaseConfigured
-  ? createClient(url as string, key as string, {
+  ? createClient(url, key, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
