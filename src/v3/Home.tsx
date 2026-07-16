@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { Assignment } from '../types'
 import { AssignmentCard, dateText, isOverdue, matchesQuery, pct, SearchBox } from './shared'
 
-export default function Home({ items, cloud, onAdd, onOpen, onSeeAll }: { items: Assignment[]; cloud: boolean; onAdd: () => void; onOpen: (id: string) => void; onSeeAll: () => void }) {
+export default function Home({ items, cloud, onAdd, onOpen, onSeeAll, onResearch, onTemplates }: { items: Assignment[]; cloud: boolean; onAdd: () => void; onOpen: (id: string) => void; onSeeAll: () => void; onResearch: () => void; onTemplates: () => void }) {
   const [query, setQuery] = useState('')
   const active = [...items].filter((item) => item.status !== 'مكتمل').sort((a, b) => +new Date(a.dueAt) - +new Date(b.dueAt))
   const done = items.filter((item) => item.status === 'مكتمل').length
@@ -13,6 +13,7 @@ export default function Home({ items, cloud, onAdd, onOpen, onSeeAll }: { items:
     <header className="topbar"><div><span className="eyebrow">تطبيق الطلاب</span><h1>منجِز</h1></div><span className="sync-badge">{cloud ? 'سحابي' : 'محلي'}</span></header>
     <section className="welcome"><h2>رتّب تكليفاتك</h2><p>تابع المواعيد وابحث في كل أعمالك من مكان واحد.</p></section>
     <SearchBox value={query} onChange={setQuery} placeholder="ابحث بالعنوان أو المادة أو المهمة…" />
+    {!query.trim() && <section className="smart-tools"><div className="section-head compact"><div><span className="eyebrow">أدوات ذكية</span><h2>أنجز المحتوى من داخل التطبيق</h2></div></div><div className="smart-tool-grid"><button className="smart-tool ai-tool" onClick={onResearch}><span className="tool-icon">AI</span><strong>مساعد البحث</strong><small>بحث في الإنترنت، مصادر وكتابة موثقة</small></button><button className="smart-tool" onClick={onTemplates}><span className="tool-icon">▦</span><strong>قوالب جاهزة</strong><small>خطط ومهام للأبحاث والتقارير والعروض</small></button></div></section>}
     {!query.trim() && active[0] && <section className="hero-card"><span className="muted">أقرب موعد</span><h3>{active[0].title}</h3><p>{active[0].course} — {dateText(active[0].dueAt)}</p><div className="progress-track"><span style={{ width: `${pct(active[0])}%` }} /></div><button className="primary-button" onClick={() => onOpen(active[0].id)}>متابعة التكليف</button></section>}
     {!query.trim() && <div className="stats-grid three"><div className="stat"><strong>{active.length}</strong><span>قيد المتابعة</span></div><div className="stat"><strong>{done}</strong><span>مكتملة</span></div><div className={overdue ? 'stat attention' : 'stat'}><strong>{overdue}</strong><span>متأخرة</span></div></div>}
     {!query.trim() && <button className="wide-add" onClick={onAdd}>＋ إضافة تكليف جديد</button>}
