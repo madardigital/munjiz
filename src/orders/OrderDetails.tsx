@@ -29,11 +29,18 @@ export default function OrderDetails({ order, onBack, onUpdate, onDelete, onTogg
     setWhatsappMessage(template.build(order))
   }, [templateId, order])
 
-  const openWhatsApp = async () => {
+  const openWhatsApp = () => {
     const phone = normalizePhone(order.phone)
     if (phone.length < 8) { setNotice('رقم واتساب غير صحيح. أضف رمز الدولة والرقم كاملًا.'); return }
-    await onContact()
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`, '_blank', 'noopener,noreferrer')
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`
+    const opened = window.open('', '_blank')
+    if (opened) {
+      opened.opener = null
+      opened.location.href = url
+    } else {
+      window.location.href = url
+    }
+    void onContact()
   }
 
   const copyMessage = async () => {
@@ -42,8 +49,11 @@ export default function OrderDetails({ order, onBack, onUpdate, onDelete, onTogg
   }
 
   const changeStatus = async (status: OrderStatus) => {
-    const next = { ...order, status, paidAmount: status === 'مكتمل ومدفوع' ? order.totalAmount : order.paidAmount }
-    await onUpdate(next)
+    if (status === 'مكتمل ومدفوع' && remaining(order) > 0) {
+      setNotice('سجّل المبلغ المتبقي أولًا قبل اعتماد الطلب مكتملًا ومدفوعًا.')
+      return
+    }
+    await onUpdate({ ...order, status })
   }
 
   const addTask = async (event: FormEvent) => {
@@ -71,7 +81,7 @@ export default function OrderDetails({ order, onBack, onUpdate, onDelete, onTogg
 
     <section className="om-panel"><h2>حالة الطلب</h2><div className="om-two"><label>الحالة<select value={order.status} onChange={(event) => void changeStatus(event.target.value as OrderStatus)}>{orderStatuses.map((item) => <option key={item}>{item}</option>)}</select></label><label>الأولوية<select value={order.priority} onChange={(event) => void onUpdate({ ...order, priority: event.target.value as Priority })}>{priorities.map((item) => <option key={item}>{item}</option>)}</select></label></div></section>
 
-    <section className="om-panel om-whatsapp-panel"><div className="om-section-head"><div><span className="om-eyebrow">تواصل سريع</span><h2>واتساب العميل</h2></div><span className="om-phone">{order.phone}</span></div><label>قالب الرسالة<select value={templateId} onChange={(event) => setTemplateId(event.target.value)}>{whatsappTemplates.map((template) => <option key={template.id} value={template.id}>{template.label}</option>)}</select></label><textarea rows={7} value={whatsappMessage} onChange={(event) => setWhatsappMessage(event.target.value)} /><div className="om-action-grid"><button className="whatsapp" onClick={() => void openWhatsApp()}>فتح واتساب</button><button onClick={() => void copyMessage()}>نسخ الرسالة</button></div><small>آخر تواصل: {dateText(order.lastContactAt)}</small></section>
+    <section className="om-panel om-whatsapp-panel"><div className="om-section-head"><div><span className="om-eyebrow">تواصل سريع</span><h2>واتساب العميل</h2></div><span className="om-phone">{order.phone}</span></div><label>قالب الرسالة<select value={templateId} onChange={(event) => setTemplateId(event.target.value)}>{whatsappTemplates.map((template) => <option key={template.id} value={template.id}>{template.label}</option>)}</select></label><textarea rows={7} value={whatsappMessage} onChange={(event) => setWhatsappMessage(event.target.value)} /><div className="om-action-grid"><button className="whatsapp" onClick={openWhatsApp}>فتح واتساب</button><button onClick={() => void copyMessage()}>نسخ الرسالة</button></div><small>آخر تواصل: {dateText(order.lastContactAt)}</small></section>
 
     <section className="om-panel"><div className="om-section-head"><h2>مهام الطلب</h2><span>{order.tasks.filter((task) => task.done).length}/{order.tasks.length}</span></div><div className="om-task-list compact">{order.tasks.map((task) => <article className={task.done ? 'om-task-item done' : 'om-task-item'} key={task.id}><label><input type="checkbox" checked={task.done} onChange={() => void onToggleTask({ ...task, done: !task.done })} /><div><strong>{task.title}</strong><small>{task.priority}</small></div></label><button className="om-delete-mini" onClick={() => window.confirm('حذف المهمة؟') && void onDeleteTask(task.id)}>×</button></article>)}</div><form className="om-inline" onSubmit={addTask}><input value={taskTitle} onChange={(event) => setTaskTitle(event.target.value)} placeholder="أضف مهمة للطلب" /><button disabled={busy}>＋</button></form></section>
 
