@@ -4,6 +4,7 @@ import { registerSW } from 'virtual:pwa-register'
 import AppV3 from './AppV3'
 import './styles.css'
 import './features.css'
+import './research-tools.css'
 
 registerSW({ immediate: true })
 
