@@ -1,0 +1,20 @@
+{
+  "name": "مدار الطلبات — إدارة أعمالي",
+  "short_name": "مدار الطلبات",
+  "description": "إدارة طلبات العملاء والمهام والمدفوعات والتواصل عبر واتساب.",
+  "lang": "ar",
+  "dir": "rtl",
+  "theme_color": "#1b5f55",
+  "background_color": "#f3f6f5",
+  "display": "standalone",
+  "start_url": "/munjiz/orders/",
+  "scope": "/munjiz/orders/",
+  "icons": [
+    {
+      "src": "/munjiz/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
