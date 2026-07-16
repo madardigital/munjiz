@@ -1,6 +1,6 @@
 import type { Assignment, AssignmentStatus, AssignmentType, Priority } from '../types'
 
-export type PrimaryView = 'home' | 'assignments' | 'calendar' | 'account'
+export type PrimaryView = 'home' | 'assignments' | 'calendar' | 'account' | 'research' | 'templates'
 export type View = PrimaryView | 'add' | 'details'
 export type SortMode = 'nearest' | 'newest' | 'progress'
 
